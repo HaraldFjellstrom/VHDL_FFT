@@ -1,0 +1,6 @@
+cocotb
+numpy
+pytest
+matplotlib
+vcdvcd
+ipykernel
