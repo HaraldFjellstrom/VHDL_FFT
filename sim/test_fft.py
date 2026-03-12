@@ -40,7 +40,8 @@ async def run_hw_iteration(dut):
     dut.en.value = 0
     
     t_start = cocotb.utils.get_sim_time(unit='ns')
-    await RisingEdge(dut.done)
+    while dut.done.value != 1:
+        await RisingEdge(dut.clk)
     t_end = cocotb.utils.get_sim_time(unit='ns')
     
     # 4. Readback Result

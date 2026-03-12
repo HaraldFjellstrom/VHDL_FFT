@@ -73,7 +73,6 @@ begin
         variable ac, bd, ad, bc  : signed(33 downto 0);
         variable mul_re, mul_im  : signed(34 downto 0);
         variable w_re_ext, w_im_ext : signed(16 downto 0);
-        variable tmp_y1_re, tmp_y1_im : signed(15 downto 0);
     begin
         if rst_n = '0' then
             y0 <= (re => (others => '0'), im => (others => '0'));

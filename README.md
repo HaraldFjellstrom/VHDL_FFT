@@ -16,3 +16,6 @@ are abstracted away by using helper functions defined in the fft_utils file.
 
 Every trigger of the hardware simulation forces a recompilation of the VHDL source, this is needed because of the 
 generics.
+
+## Notes
+Might be able to squeace out some more precission by changing to wider twiddles.

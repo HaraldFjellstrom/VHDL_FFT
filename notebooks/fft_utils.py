@@ -3,6 +3,15 @@ import os
 import logging
 from cocotb_tools.runner import get_runner
 
+Q = 14  # Q1.14 fixed-point format
+FULL_SCALE = 2**Q
+def float_to_q14(x, scale=1.0):
+    """Convert float (-1..1) to signed Q1.14 integer."""
+    return int(np.clip(x * scale, -1, 0.9999) * FULL_SCALE)
+
+def q14_to_float(x):
+    return x / FULL_SCALE
+
 def run_sim(input_signal, invert=False, wave_file=None):
     N = len(input_signal)
     sim_dir = os.path.abspath("../sim")

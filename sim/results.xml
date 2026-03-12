@@ -1,6 +1,6 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1773350580" />
-    <testcase name="run_hw_iteration" classname="test_fft" file="/home/harald/VHDL_FFT/sim/test_fft.py" lineno="7" time="0.14229893684387207" sim_time_ns="42920.0" ratio_time="301618.55704579916" />
+    <property name="random_seed" value="1773352327" />
+    <testcase name="run_hw_iteration" classname="test_fft" file="/home/harald/VHDL_FFT/sim/test_fft.py" lineno="7" time="0.13916826248168945" sim_time_ns="18610.0" ratio_time="133723.01750514808" />
   </testsuite>
 </testsuites>
