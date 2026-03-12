@@ -68,7 +68,6 @@ begin
 
     process(clk, rst_n)
         -- Calculation variables
-        variable y0_q14, y1_q14 : signed(15 downto 0);
         variable sum_re, diff_re : signed(16 downto 0);
         variable sum_im, diff_im : signed(16 downto 0);
         variable ac, bd, ad, bc  : signed(33 downto 0);
@@ -87,16 +86,13 @@ begin
             sum_im := resize(x0.im, x0.im'length+1) + resize(x1.im, x1.im'length+1);
 
             -- Extract Q1.14 from sum
-            y0_q14 := sum_re(15 downto 0);
-            y1_q14 := sum_im(15 downto 0);
-
             -- Apply conditional scaling (divide by 2) for bit-growth management
             if scale = '1' then
-                y0.re <= shift_right(y0_q14, 1);
-                y0.im <= shift_right(y1_q14, 1);
+                y0.re <= sum_re(16 downto 1);
+                y0.im <= sum_im(16 downto 1);
             else
-                y0.re <= y0_q14;
-                y0.im <= y1_q14;      
+                y0.re <= sum_re(15 downto 0);
+                y0.im <= sum_im(15 downto 0);
             end if;  
 
             -- Stage 2: Difference and Complex Multiplication (Y1 path)
@@ -121,21 +117,17 @@ begin
             mul_re := resize(ac, 35) - resize(bd, 35);   -- Q5.28
             mul_im := resize(ad, 35) + resize(bc, 35);
 
-            -- Convergent Rounding: Add half-LSB (2^13) before truncation
-            mul_re := mul_re + to_signed(2**13, mul_re'length);
-            mul_im := mul_im + to_signed(2**13, mul_im'length);
+            -- Convergent Rounding: Add half-LSB (2^14) before truncation
+            mul_re := mul_re + to_signed(2**14, mul_re'length);
+            mul_im := mul_im + to_signed(2**14, mul_im'length);
 
-            -- Truncate and shift to return to Q1.14
-            tmp_y1_re := mul_re(29 downto 14) + to_signed(1, 16);
-            tmp_y1_im := mul_im(29 downto 14) + to_signed(1, 16);
-
-            -- Final scaling and assignment for Y1
+            -- Final scaling and assignment for Y1, slicing back to Q1.14
             if scale = '1' then
-                y1.re <= shift_right(tmp_y1_re, 1);
-                y1.im <= shift_right(tmp_y1_im, 1);
+                y1.re <= mul_re(30 downto 15);
+                y1.im <= mul_im(30 downto 15);
             else
-                y1.re <= tmp_y1_re;
-                y1.im <= tmp_y1_im;      
+                y1.re <= mul_re(29 downto 14);
+                y1.im <= mul_im(29 downto 14);
             end if;  
             
             -- Pulse done to indicate single-cycle calculation completion

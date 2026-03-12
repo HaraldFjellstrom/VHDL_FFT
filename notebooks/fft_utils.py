@@ -1,5 +1,7 @@
 import numpy as np
 import os
+import logging
+from cocotb_tools.runner import get_runner
 
 def run_sim(input_signal, invert=False, wave_file=None):
     N = len(input_signal)
@@ -12,7 +14,10 @@ def run_sim(input_signal, invert=False, wave_file=None):
     np.savez(os.path.join(sim_dir, "stimulus.npz"), re=re_int, im=im_int)
 
     # 2. Setup the Runner
-    from cocotb_tools.runner import get_runner
+    tools_logger = logging.getLogger("cocotb_tools.runner")
+    tools_logger.setLevel(logging.ERROR)
+    logging.getLogger("cocotb").setLevel(logging.ERROR)
+    
     runner = get_runner("nvc")
 
     # 3. THE FIX: Build Step
@@ -33,7 +38,7 @@ def run_sim(input_signal, invert=False, wave_file=None):
     )
 
     # 4. Run Test
-    test_args = []
+    test_args = []        
     if wave_file:
         test_args.append(f"--wave={os.path.join(sim_dir, wave_file)}")
 
@@ -49,7 +54,8 @@ def run_sim(input_signal, invert=False, wave_file=None):
             test_dir=sim_dir,
             parameters={"N": N, "SCALE_THRESHOLD" : 8191},
             test_args=test_args,
-            extra_env={"HW_INVERT": str(int(invert))}
+            extra_env={"HW_INVERT": str(int(invert))},
+            results_xml="results.xml"
         )
     except Exception as e:
         print("❌ The simulator process crashed or returned an error.")
@@ -68,3 +74,43 @@ def run_sim(input_signal, invert=False, wave_file=None):
     #    sig_hw = sig_hw / N
         
     return sig_hw, int(data['exp']), int(data['cycles'])
+
+
+def analyze_fft_performance(input_signal, hw_sig, hw_exp, is_ifft=False):
+    """
+    Compares Hardware FFT output against NumPy's Golden Model.
+    
+    Args:
+        input_signal: The original complex time-domain signal.
+        hw_sig: The output returned from run_sim (already normalized).
+        hw_exp: The block exponent returned from run_sim.
+        is_ifft: Boolean flag to switch between FFT and IFFT comparison.
+    """
+    N = len(input_signal)
+    
+    # 1. Generate Golden Reference
+    if is_ifft:
+        # If testing IFFT, the input_signal is already in frequency domain
+        golden_ref = np.fft.ifft(input_signal)
+    else:
+        golden_ref = np.fft.fft(input_signal)
+
+    # 2. Alignment and Normalization
+    hw_sig = ( hw_sig * (2.0**(hw_exp)) )
+    
+    # 3. Calculate Mean Squared Error (MSE)
+    # MSE = average(|Golden - HW|^2)
+    error = golden_ref - hw_sig
+    mse = np.mean(np.abs(error)**2)
+    
+    # 4. Calculate Signal-to-Quantization-Noise Ratio (SQNR)
+    # Useful for showing the quality of your fixed-point implementation
+    signal_power = np.mean(np.abs(golden_ref)**2)
+    sqnr = 10 * np.log10(signal_power / mse)
+
+    return {
+        "mse": mse,
+        "sqnr_db": sqnr,
+        "golden": golden_ref,
+        "error_vec": error
+    }
