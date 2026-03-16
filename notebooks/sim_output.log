@@ -1,0 +1,18 @@
+** Note: loading VHPI plugin /home/harald/VHDL_FFT/.vhdl_env/lib/python3.11/site-packages/cocotb/libs/libcocotbvhpi_nvc.so
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.11.9 interpreter at /home/harald/VHDL_FFT/.vhdl_env/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VHPI registered
+     0.00ns INFO     cocotb                             Running on nvc version 1.20-devel
+     0.00ns WARNING  gpi                                VHPI: Other iterator types not implemented yet
+     0.00ns INFO     cocotb                             Seeding Python random module with 1773695844
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /home/harald/VHDL_FFT/.vhdl_env/lib/python3.11/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_fft.run_hw_iteration (1/1)
+481330.00ns INFO     cocotb.regression                  test_fft.run_hw_iteration passed
+481330.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                        ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        **************************************************************************************
+                                                        ** test_fft.run_hw_iteration      PASS      481330.00           2.29     210531.77  **
+                                                        **************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0             481330.00           2.30     209704.31  **
+                                                        **************************************************************************************
+** Note: 481330ns+1: VHPI plugin requested end of simulation

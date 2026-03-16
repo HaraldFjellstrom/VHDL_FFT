@@ -87,6 +87,8 @@ begin
             -- Extract Q1.14 from sum
             -- Apply conditional scaling (divide by 2) for bit-growth management
             if scale = '1' then
+                sum_re := round_convergent(sum_re, 1);
+                sum_im := round_convergent(sum_im, 1);
                 y0.re <= sum_re(16 downto 1);
                 y0.im <= sum_im(16 downto 1);
             else
@@ -117,8 +119,8 @@ begin
             mul_im := resize(ad, 35) + resize(bc, 35);
 
             -- Convergent Rounding: Add half-LSB (2^14) before truncation
-            mul_re := mul_re + to_signed(2**14, mul_re'length);
-            mul_im := mul_im + to_signed(2**14, mul_im'length);
+            mul_re := round_convergent(mul_re, 14);
+            mul_im := round_convergent(mul_im, 14); --mul_im + to_signed(2**14, mul_im'length);
 
             -- Final scaling and assignment for Y1, slicing back to Q1.14
             if scale = '1' then

@@ -12,7 +12,7 @@ def float_to_q14(x, scale=1.0):
 def q14_to_float(x):
     return x / FULL_SCALE
 
-def run_sim(input_signal, invert=False, wave_file=None):
+def run_sim(input_signal, invert=False, SCALE_THRESHOLD=8191, wave_file=None):
     N = len(input_signal)
     sim_dir = os.path.abspath("../sim")
     vhdl_dir = os.path.abspath("../vhdl") # Path to your .vhd files
@@ -50,9 +50,10 @@ def run_sim(input_signal, invert=False, wave_file=None):
     test_args = []        
     if wave_file:
         test_args.append(f"--wave={os.path.join(sim_dir, wave_file)}")
+        test_args.append(f"--format=vcd")
 
     # Inside run_sim in fft_utils.py
-    print(f"--- Starting Hardware Simulation (N={N}) ---")
+    #print(f"--- Starting Hardware Simulation (N={N}) ---")
     
     # 4. Execute Simulation
     # runner.test() returns None but raises an exception if the sim process fails
@@ -61,10 +62,11 @@ def run_sim(input_signal, invert=False, wave_file=None):
             hdl_toplevel="fft_top",
             test_module="test_fft",
             test_dir=sim_dir,
-            parameters={"N": N, "SCALE_THRESHOLD" : 8191},
+            parameters={"N": N, "SCALE_THRESHOLD" : SCALE_THRESHOLD},
             test_args=test_args,
             extra_env={"HW_INVERT": str(int(invert))},
-            results_xml="results.xml"
+            results_xml="results.xml",
+            log_file="sim_output.log"
         )
     except Exception as e:
         print("❌ The simulator process crashed or returned an error.")
@@ -113,13 +115,23 @@ def analyze_fft_performance(input_signal, hw_sig, hw_exp, is_ifft=False):
     mse = np.mean(np.abs(error)**2)
     
     # 4. Calculate Signal-to-Quantization-Noise Ratio (SQNR)
-    # Useful for showing the quality of your fixed-point implementation
     signal_power = np.mean(np.abs(golden_ref)**2)
-    sqnr = 10 * np.log10(signal_power / mse)
+    
+    if mse == 0:
+        # If the error is zero, the SQNR is effectively limited only by 
+        # the precision of the floating point numbers used for the check.
+        # Theoretical max SQNR ~= 6.02 x 14 + 1.76 = 86.04 dB
+        sqnr = 90.0 # Or any high number that represents "Perfect"
+    else:
+        sqnr = 10 * np.log10(signal_power / mse)
+        sqnr = min(sqnr, 90.0)
+
+    max_diff = np.max(np.abs(error))
 
     return {
         "mse": mse,
         "sqnr_db": sqnr,
+        "max_diff": max_diff,
         "golden": golden_ref,
         "error_vec": error
     }

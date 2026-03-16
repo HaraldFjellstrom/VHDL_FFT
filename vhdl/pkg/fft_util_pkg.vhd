@@ -36,7 +36,7 @@ package fft_util_pkg is
 
     function log2_ceil(n : integer) return integer;
     function bit_reverse(input : natural; width : natural) return natural;
-
+    function round_convergent(val : signed; lsb_idx : integer) return signed;
 end package;
 
 package body fft_util_pkg is
@@ -69,4 +69,34 @@ package body fft_util_pkg is
         return to_integer(result);
     end function;
 
+
+    function round_convergent(val : signed; lsb_idx : integer) return signed is
+	variable res       : signed(val'range);
+	variable round_bit : std_logic;
+	variable sticky    : std_logic := '0';
+	variable lsb       : std_logic;
+	variable round_up  : std_logic;
+    begin
+	res := val;
+	round_bit := val(lsb_idx - 1);
+	lsb       := val(lsb_idx);
+    
+	-- Check if any bits below the round bit are '1'
+        for i in 0 to (lsb_idx - 2) loop
+            if val(i) = '1' then
+                sticky := '1';
+                exit;
+            end if;
+        end loop;
+
+        -- Convergent logic: Round up if > 0.5 OR (== 0.5 and LSB is 1)
+        round_up := round_bit and (sticky or lsb);
+
+        if round_up = '1' then
+            -- Add 1 at the LSB position
+            res := val + (to_signed(1, val'length) sll lsb_idx);
+        end if;
+    
+        return res;
+    end function;
 end package body;
