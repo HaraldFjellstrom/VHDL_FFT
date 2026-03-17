@@ -44,7 +44,7 @@ jobs:
         # 1,5. Add the page header though injecting python
         python3 -c "
         import nbformat as nbf
-        ntbk = nbf.read('notebooks/Verification_report.ipynb', as_version=4)
+        ntbk = nbf.read('notebooks/Verification_Report.ipynb', as_version=4)
         header_text = '# Harald Fjellström | VHDL FFT Core | $(date +%Y-%m-%d)\n---'
         ntbk.cells.insert(0, nbf.v4.new_markdown_cell(header_text))
         nbf.write(ntbk, 'notebooks/Verification_report.ipynb')
