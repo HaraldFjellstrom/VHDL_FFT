@@ -1,5 +1,5 @@
 # Fixed-Point FFT Core (VHDL)
-[![VHDL Verification](https://github.com/HaraldFjellstrom/VHDL_FFT/actions/workflows/main.yml/badge.svg)](https://github.com/HaraldFjellstrom/VHDL_FFT/actions)
+[![VHDL Verification](https://github.com/HaraldFjellstrom/VHDL_FFT/actions/workflows/verification_report.yml/badge.svg)](https://github.com/HaraldFjellstrom/VHDL_FFT/actions/workflows/verification_report.yml)
 
 A parameterizable Fast Fourier Transform (FFT) implementation developed for the **AGSTU VHDL 2** digital design course. This project demonstrates a Python-driven RTL verification flow, bridging VHDL implementation with high-level signal analysis and automated CI/CD reporting.
 
@@ -18,7 +18,7 @@ A parameterizable Fast Fourier Transform (FFT) implementation developed for the 
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/HaraldFjellstrom/VHDL_FFT.git](https://github.com/HaraldFjellstrom/VHDL_FFT.git)
+git clone https://github.com/HaraldFjellstrom/VHDL_FFT.git
 cd VHDL_FFT
 ```
 
@@ -29,8 +29,8 @@ The setup script automates the creation of a Python virtual environment and inst
 source setup_env.sh
 ```
 
-[!NOTE]
-This script ensures all dependencies are pinned to compatible versions. If you encounter permissions issues with the simulator (NVC), ensure it is correctly mapped in your $PATH.
+> [!NOTE]
+> This script ensures all dependencies are pinned to compatible versions. If you encounter permissions issues with the simulator (NVC), ensure it is correctly mapped in your $PATH.
 
 ### 3. Run Interactive Analysis
 The project includes a Jupyter-based analysis suite that serves as both a development playground and a verification engine. 
