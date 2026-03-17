@@ -40,7 +40,7 @@ jobs:
       run: |
         # We use papermill to run the notebook. 
         # It will use the default python3 kernel (no need for the 'vhdl_fft' alias here)
-        papermill notebooks/Verification_Report.ipynb executed_output.ipynb
+        papermill notebooks/Verification_Report.ipynb executed_output.ipynb -k python3
 
     - name: Convert to PDF
       run: |
