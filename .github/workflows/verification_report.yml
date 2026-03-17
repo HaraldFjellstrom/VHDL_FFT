@@ -22,6 +22,9 @@ jobs:
     - name: Install VHDL Simulator (nvc)
       run: |
         sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository -y ppa:nick-gasson/nvc
+        sudo apt-get update
         sudo apt-get install -y nvc
 
     - name: Install Python Dependencies
