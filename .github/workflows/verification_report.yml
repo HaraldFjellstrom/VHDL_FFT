@@ -41,6 +41,24 @@ jobs:
         # 1. Add paths to Python so it can find the modules
         export PYTHONPATH=$PYTHONPATH:$(pwd)/notebooks:$(pwd)/sim
 
+        # This Python script modifies the notebook file in-place
+        python3 -c "
+        import nbformat as nbf
+        from datetime import datetime
+        # Use the exact filename from your repo
+        path = 'notebooks/Verification_Report.ipynb'
+        ntbk = nbf.read(path, as_version=4)
+        # Create a professional header string
+        header_content = (
+            f'# Verification Report: VHDL FFT Core\n'
+            f'**Designer:** Harald Fjellström | **Date:** {datetime.now().strftime(\"%Y-%m-%d\")}\n'
+            f'---\n'
+        )
+        # Insert at the very top (index 0)
+        ntbk.cells.insert(0, nbf.v4.new_markdown_cell(header_content))
+        nbf.write(ntbk, path)
+        "
+
         # 2. Run papermill and tell it to act as if it's inside the 'notebooks' folder
         papermill $(pwd)/notebooks/Verification_Report.ipynb $(pwd)/executed_output.ipynb \
           -k python3 \
@@ -51,18 +69,7 @@ jobs:
         REPORT_NAME="vhdl_fft_verification_report_$(date +'%Y_%m_%d')"
         echo "FINAL_REPORT_NAME=$REPORT_NAME" >> $GITHUB_ENV
 
-        # Create a temporary config file for adding header and footer
-        cat <<EOF > jupyter_nbconvert_config.py
-        c = get_config()
-        c.WebPDFExporter.display_header_footer = True
-        c.WebPDFExporter.header_template = '<div style="font-size: 10px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between;"><span>Harald Fjellström</span><span><b>Design:</b> VHDL FFT Core</span><span>$(date +%Y-%m-%d)</span></div>'
-        c.WebPDFExporter.footer_template = '<div style="font-size: 10px; width: 100%; text-align: right; padding-right: 20px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'
-        c.WebPDFExporter.margin_top = '1in'
-        c.WebPDFExporter.margin_bottom = '1in'
-        EOF
-
         jupyter nbconvert --to webpdf \
-          --config jupyter_nbconvert_config.py \
           --TagRemovePreprocessor.remove_input_tags="['remove_input']" \
           --no-prompt \
           --allow-chromium-download \
