@@ -80,10 +80,12 @@ architecture rtl of fft_top is
     signal i_wr_en : std_logic;
     signal i_rd_data, i_wr_data : complex_q1_14;
 
-    signal fft_rd_addr : integer range 0 to N-1 := 0;
-    signal fft_wr_addr : integer range 0 to N-1 := 0;
-    signal fft_wr_data : complex_q1_14;
-    signal fft_wr_en : std_logic;
+    signal fft_rd_addr      : integer range 0 to N-1 := 0;
+    signal fft_wr_addr      : integer range 0 to N-1 := 0;
+    signal fft_wr_data      : complex_q1_14;
+    signal fft_wr_en        : std_logic;
+    signal fft_scale_first  : std_logic;
+    signal rst_scale_first  : std_logic;
 
 begin
     -- Throw compilation/simulation if N is not a power of two
@@ -122,6 +124,7 @@ begin
             invert => invert,
             bank_shft => bank_shft,
             blk_exp => blk_exp,
+            scale_frst => fft_scale_first,
 
             -- RAM Interface, used controller
             rd_data => i_rd_data,
@@ -136,10 +139,16 @@ begin
     process(clk, rst_n)
     begin
         if rst_n = '0' then
-            bank_sel    <= '0';
-            i_wr_en     <= '0';
+            bank_sel        <= '0';
+            i_wr_en         <= '0';
+            fft_scale_first <= '0';
+            rst_scale_first <= '0';
 
         elsif rising_edge(clk) then
+            if en = '1' then
+                rst_scale_first <= '1';
+            end if;
+
             -- Swap RAM banks
             if bank_shft = '1' then
                 bank_sel <= not bank_sel;
@@ -147,15 +156,25 @@ begin
 
             -- When calculating, RAM used by FFT else exposed.
             if done = '0' then
+                if rst_scale_first = '1' then
+                    fft_scale_first <= '0';
+                    rst_scale_first <= '0';
+                end if;
+
                 i_wr_data <= fft_wr_data;
                 i_wr_addr <= fft_wr_addr;
                 i_wr_en   <= fft_wr_en;
             else
-                -- Add monitor of written data, check if abs(re)+abs(im) > SCALE_THRESHOLD
-                -- when it is set signal to indicate scaling on the first stage. 
                 i_wr_data <= wr_data;
                 i_wr_addr <= wr_addr;
                 i_wr_en   <= wr_en;
+
+                if wr_en then
+                    if (abs(wr_data.re) + abs(wr_data.im)) > SCALE_THRESHOLD then
+                        fft_scale_first <= '1';
+                    end if;
+                end if;
+
             end if;
 
         end if;

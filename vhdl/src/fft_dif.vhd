@@ -63,6 +63,7 @@ entity fft_dif is
         invert      : in std_logic;
         bank_shft   : out std_logic;  -- Indicates switching of pingpong ram
         blk_exp     : out natural range 0 to log2_ceil(N);
+        scale_frst  : in std_logic;
 
         -- RAM Interface, used controller
         rd_data     : in complex_q1_14;
@@ -162,8 +163,8 @@ begin
                 stage       <= 0;
                 butterfly   <= 0;
                 state       <= S0;
-                scale_count <= 1;   -- Initial stage scaling
-                scale       <= '1';
+                scale_count <= 1 when scale_frst = '1' else 0;   -- Initial stage scaling
+                scale       <= scale_frst;
                 bank_shft   <= '1';
                 done        <= '0';
                 -- Clear internal registers
