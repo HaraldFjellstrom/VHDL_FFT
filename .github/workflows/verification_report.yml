@@ -42,7 +42,7 @@ jobs:
         export PYTHONPATH=$PYTHONPATH:$(pwd)/notebooks:$(pwd)/sim
         
         # 2. Run papermill and tell it to act as if it's inside the 'notebooks' folder
-        papermill notebooks/Verification_report.ipynb executed_output.ipynb \
+        papermill notebooks/Verification_Report.ipynb executed_output.ipynb \
           -k python3 \
           --cwd notebooks
 
