@@ -1,7 +1,7 @@
 # Fixed-Point FFT Core (VHDL)
 [![VHDL Verification](https://github.com/HaraldFjellstrom/VHDL_FFT/actions/workflows/main.yml/badge.svg)](https://github.com/HaraldFjellstrom/VHDL_FFT/actions)
 
-A parameterizable Fast Fourier Transform (FFT) implementation developed for the **AGSTU VHDL 2** digital design course. This project demonstrates a hardware-to-software verification flow, bridging VHDL RTL with Python-based signal analysis and automated CI/CD reporting.
+A parameterizable Fast Fourier Transform (FFT) implementation developed for the **AGSTU VHDL 2** digital design course. This project demonstrates a Python-driven RTL verification flow, bridging VHDL implementation with high-level signal analysis and automated CI/CD reporting.
 
 ## Key Features
 * **Parameterizable Architecture:** Configurable FFT/IFFT length using Q1.14 fixed-point arithmetic via VHDL generics.
