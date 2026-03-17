@@ -23,7 +23,7 @@ jobs:
       run: |
         # Download the latest stable .deb package (v1.13.0 as of current stable)
         # We use -L to follow redirects and --output to name the file
-        curl -L https://github.com/nickg/nvc/releases/download/v1.13.0/nvc_1.13.0_amd64.deb --output nvc.deb
+        wget https://github.com/nickg/nvc/releases/download/v1.13.0/nvc_1.13.0_amd64.deb
         # Install the package and its dependencies
         sudo apt-get update
         sudo apt install -y ./nvc.deb
