@@ -151,6 +151,8 @@ begin
                 i_wr_addr <= fft_wr_addr;
                 i_wr_en   <= fft_wr_en;
             else
+                -- Add monitor of written data, check if abs(re)+abs(im) > SCALE_THRESHOLD
+                -- when it is set signal to indicate scaling on the first stage. 
                 i_wr_data <= wr_data;
                 i_wr_addr <= wr_addr;
                 i_wr_en   <= wr_en;

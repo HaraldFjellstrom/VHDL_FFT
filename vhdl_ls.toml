@@ -1,0 +1,10 @@
+[libraries]
+
+lib.files = [
+"vhdl/pkg/fft_util_pkg.vhd",
+"vhdl/pkg/twiddle_dif_q1_14_pkg.vhd",
+"vhdl/src/fft_pingpong_ram.vhd",
+"vhdl/src/fft_butterfly.vhd",
+"vhdl/src/fft_top.vhd",
+"vhdl/src/fft_dif.vhd",
+]

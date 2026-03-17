@@ -3,15 +3,6 @@ import os
 import logging
 from cocotb_tools.runner import get_runner
 
-Q = 14  # Q1.14 fixed-point format
-FULL_SCALE = 2**Q
-def float_to_q14(x, scale=1.0):
-    """Convert float (-1..1) to signed Q1.14 integer."""
-    return int(np.clip(x * scale, -1, 0.9999) * FULL_SCALE)
-
-def q14_to_float(x):
-    return x / FULL_SCALE
-
 def run_sim(input_signal, invert=False, SCALE_THRESHOLD=8191, wave_file=None):
     N = len(input_signal)
     sim_dir = os.path.abspath("../sim")
@@ -76,27 +67,15 @@ def run_sim(input_signal, invert=False, SCALE_THRESHOLD=8191, wave_file=None):
     # 5. Reconstruct
     results_path = os.path.join(sim_dir, "results.npz")
     data = np.load(results_path)
-    #sig_hw = (data['re'] + 1j*data['im']) * (2.0**data['exp']) / 16384.0
+
     sig_hw = np.zeros(N, dtype=complex)
     sig_hw = (data['re'] + 1j*data['im']) / (16384.0)
-    
-    # If inverted scale back to original amplitude
-    #if invert:
-    #    sig_hw = sig_hw / N
         
     return sig_hw, int(data['exp']), int(data['cycles'])
 
 
 def analyze_fft_performance(input_signal, hw_sig, hw_exp, is_ifft=False):
-    """
-    Compares Hardware FFT output against NumPy's Golden Model.
-    
-    Args:
-        input_signal: The original complex time-domain signal.
-        hw_sig: The output returned from run_sim (already normalized).
-        hw_exp: The block exponent returned from run_sim.
-        is_ifft: Boolean flag to switch between FFT and IFFT comparison.
-    """
+
     N = len(input_signal)
     
     # 1. Generate Golden Reference
