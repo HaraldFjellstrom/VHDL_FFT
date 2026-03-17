@@ -38,9 +38,13 @@ jobs:
 
     - name: Execute Notebook
       run: |
-        # We use papermill to run the notebook. 
-        # It will use the default python3 kernel (no need for the 'vhdl_fft' alias here)
-        papermill notebooks/Verification_Report.ipynb executed_output.ipynb -k python3
+        # 1. Add paths to Python so it can find the modules
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/notebooks:$(pwd)/sim
+        
+        # 2. Run papermill and tell it to act as if it's inside the 'notebooks' folder
+        papermill notebooks/Verification_report.ipynb executed_output.ipynb \
+          -k python3 \
+          --cwd notebooks
 
     - name: Convert to PDF
       run: |
