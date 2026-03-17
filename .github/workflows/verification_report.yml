@@ -42,7 +42,7 @@ jobs:
         export PYTHONPATH=$PYTHONPATH:$(pwd)/notebooks:$(pwd)/sim
 
         # 2. Run papermill and tell it to act as if it's inside the 'notebooks' folder
-        papermill notebooks/Verification_Report.ipynb executed_output.ipynb \
+        papermill $(pwd)/notebooks/Verification_Report.ipynb $(pwd)/executed_output.ipynb \
           -k python3 \
           --cwd notebooks
 
@@ -50,7 +50,7 @@ jobs:
       run: |
         jupyter nbconvert --to webpdf \
           --TagRemovePreprocessor.remove_input_tags="['remove_input']" \
-          --allow-chromium-download notebooks/executed_output.ipynb --output ../report
+          --allow-chromium-download executed_output.ipynb --output report
 
     - name: Upload Report Artifact
       uses: actions/upload-artifact@v4
