@@ -48,6 +48,9 @@ jobs:
 
     - name: Convert to PDF
       run: |
+        REPORT_NAME="vhdl_fft_verification_report_$(date +'%Y_%m_%d')"
+        echo "FINAL_REPORT_NAME=$REPORT_NAME" >> $GITHUB_ENV
+
         HEADER_HTML='<div style="font-size: 10px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between;">
                       <span>Harald Fjellström</span>
                       <span><b>Design:</b> VHDL FFT Core</span>
@@ -60,10 +63,16 @@ jobs:
 
         jupyter nbconvert --to webpdf \
           --TagRemovePreprocessor.remove_input_tags="['remove_input']" \
-          --allow-chromium-download executed_output.ipynb --output report
+          --no-prompt \
+          --allow-chromium-download \
+          --WebPDFExporter.header_template="$HEADER_HTML" \
+          --WebPDFExporter.footer_template="$FOOTER_HTML" \
+          --WebPDFExporter.margin_top="1in" \
+          --WebPDFExporter.margin_bottom="1in" \
+          executed_output.ipynb --output "$REPORT_NAME"
 
     - name: Upload Report Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Hardware-Verification-Report
-        path: report.pdf
+        name: ${{ env.FINAL_REPORT_NAME }}
+        path: ${{ env.FINAL_REPORT_NAME }}.pdf
