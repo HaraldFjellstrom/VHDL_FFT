@@ -41,15 +41,6 @@ jobs:
         # 1. Add paths to Python so it can find the modules
         export PYTHONPATH=$PYTHONPATH:$(pwd)/notebooks:$(pwd)/sim
 
-        # 1,5. Add the page header though injecting python
-        python3 -c "
-        import nbformat as nbf
-        ntbk = nbf.read('notebooks/Verification_Report.ipynb', as_version=4)
-        header_text = '# Harald Fjellström | VHDL FFT Core | $(date +%Y-%m-%d)\n---'
-        ntbk.cells.insert(0, nbf.v4.new_markdown_cell(header_text))
-        nbf.write(ntbk, 'notebooks/Verification_report.ipynb')
-        "
-
         # 2. Run papermill and tell it to act as if it's inside the 'notebooks' folder
         papermill $(pwd)/notebooks/Verification_Report.ipynb $(pwd)/executed_output.ipynb \
           -k python3 \
@@ -63,6 +54,7 @@ jobs:
         # Create a temporary config file for adding header and footer
         cat <<EOF > jupyter_nbconvert_config.py
         c = get_config()
+        c.WebPDFExporter.display_header_footer = True
         c.WebPDFExporter.header_template = '<div style="font-size: 10px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between;"><span>Harald Fjellström</span><span><b>Design:</b> VHDL FFT Core</span><span>$(date +%Y-%m-%d)</span></div>'
         c.WebPDFExporter.footer_template = '<div style="font-size: 10px; width: 100%; text-align: right; padding-right: 20px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'
         c.WebPDFExporter.margin_top = '1in'

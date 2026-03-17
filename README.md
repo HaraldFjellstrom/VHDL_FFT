@@ -64,4 +64,4 @@ The repository is organized to separate the hardware implementation from the ver
 * **`rtl/`**: Contains the VHDL source files for the FFT core, including the butterfly units and address generation logic.
 * **`sim/`**: Includes the `cocotb` testbenches, simulation makefiles, and raw simulation results.
 * **`notebooks/`**: Jupyter notebooks and Python helper library used for regression execution, data visualization, and automated report generation.
-* **`docs/`**: Contains the final architecture documentation and the completed **H
+* **`docs/`**: Contains the final architecture documentation and other documents
