@@ -4,3 +4,6 @@ pytest
 matplotlib
 vcdvcd
 ipykernel
+papermill
+nbconvert
+playwright

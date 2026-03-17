@@ -1,0 +1,50 @@
+name: Generate Hardware Verification Report
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install VHDL Simulator (nvc)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nvc
+
+    - name: Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        python -m playwright install chromium
+
+    - name: Execute Notebook
+      run: |
+        # We use papermill to run the notebook. 
+        # It will use the default python3 kernel (no need for the 'vhdl_fft' alias here)
+        papermill Verification_Report.ipynb executed_output.ipynb
+
+    - name: Convert to PDF
+      run: |
+        # This converts the executed notebook to a PDF, hiding the code cells tagged with 'remove_input'
+        jupyter nbconvert --to webpdf \
+          --TagRemovePreprocessor.remove_input_tags="['remove_input']" \
+          --allow-chromium-download executed_output.ipynb --output report.pdf
+
+    - name: Upload Report Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Hardware-Verification-Report
+        path: report.pdf
