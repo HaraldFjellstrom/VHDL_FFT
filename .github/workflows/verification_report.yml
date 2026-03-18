@@ -1,4 +1,4 @@
-name: Generate Hardware Verification Report
+name: Generate FFT Verification Report
 
 on:
   push:
