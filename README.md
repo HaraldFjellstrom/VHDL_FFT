@@ -3,6 +3,12 @@
 
 A parameterizable Fast Fourier Transform (FFT) implementation developed for the **AGSTU VHDL 2** digital design course. This project demonstrates a Python-driven RTL verification flow, bridging VHDL implementation with high-level signal analysis and automated CI/CD reporting.
 
+<p align="center">
+  <img src="docs/report_summary_example.png" width="800" alt="FFT Verification Metrics Table">
+  <br>
+  <b>Figure 1:</b> <em>Sample metrics table extracted from the automatically generated verification report.</em>
+</p>
+
 ## Key Features
 * **Parameterizable Architecture:** Configurable FFT/IFFT length using Q1.14 fixed-point arithmetic via VHDL generics.
 * **Python-Driven Verification:** Integration of `cocotb` and `nvc` for rigorous design verification.
@@ -26,7 +32,7 @@ cd VHDL_FFT
 ```
 
 ### 2. Initialize Environment
-The setup script automates the creation of a Python virtual environment and installs the required python packages (Cocotb, NumPy, Matplotlib, Papermill).
+The setup script automates the creation of a Python virtual environment and installs the required python packages.
 
 ```bash
 source setup_env.sh

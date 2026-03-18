@@ -6,7 +6,9 @@ import os
 
 @cocotb.test()
 async def run_hw_iteration(dut):
+    # Start clock (100 MHz)
     cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
+
     # 1. Load stimulus from the utility script
     stim_path = os.path.join(os.path.dirname(__file__), "stimulus.npz")
     stim_data = np.load(stim_path)
@@ -33,10 +35,10 @@ async def run_hw_iteration(dut):
     dut.wr_en.value = 0
     await RisingEdge(dut.clk)
 
-    # 3. Pulse Start and Start Stopwatch
+    # 3. Pulse Enable and Meassure time until done
     dut.en.value = 1
-    await RisingEdge(dut.clk)
-    await RisingEdge(dut.clk) # Your 2-cycle requirement
+    while dut.done.value != 0:
+        await RisingEdge(dut.clk)
     dut.en.value = 0
     
     t_start = cocotb.utils.get_sim_time(unit='ns')
@@ -53,12 +55,11 @@ async def run_hw_iteration(dut):
     await RisingEdge(dut.clk) 
 
     for n in range(N):
-        # 1. Drive the address for the NEXT cycle
+        # Drive the address for the NEXT cycle
         if n < N - 1:
             dut.rd_addr.value = n + 1
-        # 2. Wait for the clock edge that presents data for address 'n'
+        # Wait for the clock edge that presents data for address 'n'
         await RisingEdge(dut.clk)
-        # 3. Store it directly.
         res_re[n] = dut.rd_data.re.value.to_signed()
         res_im[n] = dut.rd_data.im.value.to_signed()
 

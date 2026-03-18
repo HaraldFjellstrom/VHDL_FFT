@@ -80,6 +80,7 @@ architecture rtl of fft_top is
     signal i_wr_en : std_logic;
     signal i_rd_data, i_wr_data : complex_q1_14;
 
+    -- Internal FFT Signals
     signal fft_rd_addr      : integer range 0 to N-1 := 0;
     signal fft_wr_addr      : integer range 0 to N-1 := 0;
     signal fft_wr_data      : complex_q1_14;
