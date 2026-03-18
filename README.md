@@ -5,9 +5,12 @@ A parameterizable Fast Fourier Transform (FFT) implementation developed for the 
 
 ## Key Features
 * **Parameterizable Architecture:** Configurable FFT/IFFT length using Q1.14 fixed-point arithmetic via VHDL generics.
-* **Python-Driven Verification:** Integration of `cocotb` and `nvc` for rigorous hardware-in-the-loop testing.
-* **Automated Reporting:** A custom GitHub Actions pipeline executes simulations on every push, generating a timestamped PDF report containing SQNR, ENOB, and signal reconstruction analysis.
+* **Python-Driven Verification:** Integration of `cocotb` and `nvc` for rigorous design verification.
+* **Automated Reporting:** A custom GitHub Actions pipeline executes simulations on every push, generating a timestamped PDF report containing SQNR, ENOB, and signal reconstruction analysis (examples in `docs/reports/`).. 
 * **Fixed-Point Analysis:** Built-in tools for quantifying quantization noise and validating bit-accurate behavior.
+
+> [!IMPORTANT]
+> **Implementation Scope:** This project is a **Design Verification (DV)** suite. The RTL is optimized for algorithmic correctness and architectural validation within a simulation environment; it has not been technology-mapped for hardware synthesis.
 
 ## Prerequisites
 * **OS:** Linux or WSL2.
@@ -28,9 +31,6 @@ The setup script automates the creation of a Python virtual environment and inst
 ```bash
 source setup_env.sh
 ```
-
-> [!NOTE]
-> This script ensures all dependencies are pinned to compatible versions. If you encounter permissions issues with the simulator (NVC), ensure it is correctly mapped in your $PATH.
 
 ### 3. Run Interactive Analysis
 The project includes a Jupyter-based analysis suite that serves as both a development playground and a verification engine. 
@@ -64,4 +64,4 @@ The repository is organized to separate the hardware implementation from the ver
 * **`rtl/`**: Contains the VHDL source files for the FFT core, including the butterfly units and address generation logic.
 * **`sim/`**: Includes the `cocotb` testbenches, simulation makefiles, and raw simulation results.
 * **`notebooks/`**: Jupyter notebooks and Python helper library used for regression execution, data visualization, and automated report generation.
-* **`docs/`**: Contains the final architecture documentation and other documents
+* **`docs/`**: Contains the final architecture documentation, verification reports and other documents.
