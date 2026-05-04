@@ -7,7 +7,8 @@
 --
 --  Description   :
 --    Provides Decimation-in-Frequency (DIF) twiddle factors for FFT 
---    calculations. 
+--    calculations. This is not a synthesis ready design, wide combinatorial
+--    net makes it highly unusable in synthesis.
 --
 --    Note: The constant tables in this package are automatically generated 
 --    via a Python script. The factors are stored in Q1.14 fixed-point format.
